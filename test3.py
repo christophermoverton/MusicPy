@@ -9,22 +9,33 @@ track    = 0
 channel  = 0
 time     = 0    # In beats
 duration = 1    # In beats
-tempo    = 60   # In BPM
+tempo    = 100   # In BPM
 volume   = 100  # 0-127, as per the MIDI standard
-transpose = -2
+transpose = -1
 octaves = 2
 
 MyMIDI = MIDIFile(1)  # One track, defaults to format 1 (tempo track is created
                       # automatically)
 MyMIDI.addTempo(track, time, tempo)
-
+degreeslist = [degrees]
 ndegrees = []
 for i in range(1,octaves):
+    ndegrees1 = []
+    ndegrees2 = []
+    ndegrees3 = []
     for j in range(0, len(degrees)):
         ndegrees.append(degrees[j]+12*i)
         ndegrees.append(degrees[j]-12*i)
+        ndegrees1.append(degrees[j]+12*i)
+        ndegrees2.append(degrees[j]-12*i)
+        ndegrees3.append(degrees[j]+12*i)
+        ndegrees3.append(degrees[j]-12*i)
+    degreeslist.append(ndegrees1)
+    degreeslist.append(ndegrees2)
+    degreeslist.append(ndegrees3)
 ndegrees += degrees
-degrees = ndegrees
+#degrees = ndegrees
+degreeslist.append(ndegrees)
 ## build song 
 phrs = 100
 rpt = [1,2,3,8]
@@ -69,8 +80,14 @@ def buildphrase(degrees, phrslen, ntlen):
             nweights.append(random.random()*.35+.65)
         else:
             nweights.append(random.random()*.5+.5)##nweights[-1]*(random.random()*.05+.95))
+    ## sum nweights 
+    snweights = sum(nweights)
+
+    for i,wght in enumerate(nweights):
+        nweights[i] = wght/snweights 
+        
     ## assign time distribution
-    timedistr = [.75,.7,.65,.6,.5,.5,.25,.25,.2,.25,.35,.2,.15]
+    timedistr = [.75,.75,.7,.65,.6,.55,.5,.5,.5,.45,.4,.35,.3,.25,.25,.25,.25,.2,.15]
     tpicks = []
     timedistrs = buildtimedistr(timedistr)
     timedistr = random.choice(timedistrs)
@@ -92,14 +109,25 @@ def buildphrase(degrees, phrslen, ntlen):
     return nts
 
 def setArrangement(oldwphrs, phrs):
+    def transposePhrs(tphrase, sft = 0):
+        i = 0
+        copyphrs = []
+        for ti, nt in tphrase:
+            copyphrs.append([ti, nt+sft])
+            i += 1
+        return copyphrs
+
     ## oldwphrs length
     tphlen = 0 ## total phrase time
     nts = []  
+    randomshft = [-2,-4,0,2,4]
     for i in range(0, len(oldwphrs)):
         ind = random.randint(0,len(oldwphrs)-1)
         rptphrlen = oldwphrs[ind][1]
         for j in range(0,rptphrlen):
-            nts += oldwphrs[ind][0]
+            rshft = random.choice(randomshft)
+            ns = transposePhrs(oldwphrs[ind][0], rshft)
+            nts += ns##oldwphrs[ind][0]
     return nts     
 
 ants = []
@@ -113,8 +141,8 @@ for i in range(0, phrs):
         nts = {}
         nphrslen = random.choice(phrslensets)
         phrslens = random.choice(nphrslen)
-        
-        wphrs = buildphrase(degrees, phrslens, ntlen)
+        npdegrees = random.choice(degreeslist)
+        wphrs = buildphrase(npdegrees, phrslens, ntlen)
         oldwphrs.append([wphrs,rptphrs])
         # ants += wphrs
     # else:

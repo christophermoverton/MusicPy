@@ -13,6 +13,10 @@ tempo    = 100   # In BPM
 volume   = 100  # 0-127, as per the MIDI standard
 transpose = -1
 octaves = 2
+shft = random.randint(0,12)
+
+for i, degree in enumerate(degrees):
+    degrees[i] = degree + shft
 
 MyMIDI = MIDIFile(1)  # One track, defaults to format 1 (tempo track is created
                       # automatically)
@@ -71,7 +75,7 @@ def buildphrase(degrees, phrslen, ntlen):
         return timedists
 
     nts = []
-    picklen = 36
+    picklen = 500
     picklen = random.randint(6,picklen)
     ## assign weights
     nweights = []
@@ -87,9 +91,18 @@ def buildphrase(degrees, phrslen, ntlen):
         nweights[i] = wght/snweights 
         
     ## assign time distribution
-    timedistr = [.75,.75,.7,.65,.6,.55,.5,.5,.5,.45,.4,.35,.3,.25,.25,.25,.25,.2,.15]
+    timedistr = [.75,.75,.7,.55,.5,.5,.5,.45,.4,.35,.3,.25,.25,.25,.25,.15]
+    timedistr2 = [.35,.3,.25,.25,.25,.25,.2,.15]
+    timedistr3 = [.5,.25,.25,.25,.2]
+    timedistr4 = [1.0,.85,.75,.5]
+    timedistr5 = [.75, 1.0,.65,.5,.25]
+    timedistr6 = [.5, .75, 1.0]
+    timedistr7 = [2.0, 1.75, 1.5]
+    timedistr8 = [3.0, 4.0,1.0]
+    tdist2 = [timedistr,timedistr2,timedistr3,timedistr4, timedistr5] ##timedistr6, timedistr7, timedistr8]
+    tdist = random.choice(tdist2)
     tpicks = []
-    timedistrs = buildtimedistr(timedistr)
+    timedistrs = buildtimedistr(tdist)
     timedistr = random.choice(timedistrs)
     for i in range(0, picklen):
         tpicks.append(random.choice(timedistr))
@@ -108,7 +121,9 @@ def buildphrase(degrees, phrslen, ntlen):
     #     nts.append(np)
     return nts
 
-def setArrangement(oldwphrs, phrs):
+randomshft = [[-4,-2,0,2,4], [-12,-6,0,6,12], [-9,-6,-3,0,3,6,9],[-8,-4,0,4,8],[0]]
+rshft = random.choice(randomshft)
+def setArrangement(oldwphrs, phrs, randomshft):
     def transposePhrs(tphrase, sft = 0):
         i = 0
         copyphrs = []
@@ -120,7 +135,7 @@ def setArrangement(oldwphrs, phrs):
     ## oldwphrs length
     tphlen = 0 ## total phrase time
     nts = []  
-    randomshft = [-2,-4,0,2,4]
+    #randomshft = [-3,-1,0,1,3]
     for i in range(0, len(oldwphrs)):
         ind = random.randint(0,len(oldwphrs)-1)
         rptphrlen = oldwphrs[ind][1]
@@ -148,7 +163,7 @@ for i in range(0, phrs):
     # else:
     #     ants += wphrs 
     rptphrs -= 1
-ants = setArrangement(oldwphrs,phrs)
+ants = setArrangement(oldwphrs,phrs,rshft)
 ttime = 0
 for time, pitch in ants:
     ttime += time

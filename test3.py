@@ -169,5 +169,5 @@ for time, pitch in ants:
     ttime += time
     MyMIDI.addNote(track, channel, pitch+transpose, ttime, duration, volume)
 
-with open("C:\\Users\\chris\\MuiscPy\\major-scale.mid", "wb") as output_file:
+with open("/home/christopher/musicpy/MusicPy/major-scale.mid", "wb") as output_file:
     MyMIDI.writeFile(output_file)

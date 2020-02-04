@@ -18,7 +18,7 @@ https://nbviewer.jupyter.org/github/craffel/midi-dataset/blob/master/Tutorial.ip
 test8.py provides working example in sourcing midi data, for example, by artist_terms and artist_terms_weights
 you'll need lmd_matched_h5, lmd_matched, and match_scores.json files from link also installed in your download path...adjust your paths in script as necessary
 
-I use Anaconda3 for package installations on...just remember to set your compiler target to said Anaconda source in Visual Studio Code
+I use Anaconda3 for package installations on...just remember to set your compiler target to said Anaconda environment in Visual Studio Code
 see...
 https://code.visualstudio.com/docs/python/environments
 
